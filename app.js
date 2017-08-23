@@ -31,21 +31,29 @@ var connector = new builder.ChatConnector({
 });
 
 // Listen for messages from users 
+//app.post('/api/messages', connector.listen());
+var bot = new builder.UniversalBot(connector);
 app.post('/api/messages', connector.listen());
 
 
 var recognizer = new cognitiveservices.QnAMakerRecognizer({
 knowledgeBaseId: '9e1bc1bc-50d5-452d-a988-f14ca47eeeb0', 
-subscriptionKey: '1efc68010d3c43bd8d274104169242ad'});
+subscriptionKey: '1efc68010d3c43bd8d274104169242ad',
+//top: 3
+});
+
+// Allows bot to train itself with user input
+// var qnaMakerTools = new cognitiveservices.QnAMakerTools();
+// bot.library(qnaMakerTools.createLibrary());
 
 var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
 recognizers: [recognizer],
-defaultMessage: 'No good match in FAQ.',
-  qnaThreshold: 0.5});
+defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance in your state :)',
+qnaThreshold: 0.3,
+//feedbackLib: qnaMakerTools
+});
 
-// Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
-var bot = new builder.UniversalBot(connector);
-
+// start the bot
 bot.dialog('/', BasicQnAMakerDialog);
 
 
@@ -68,4 +76,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = app; 
