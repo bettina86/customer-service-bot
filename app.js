@@ -43,19 +43,40 @@ var bot = new builder.UniversalBot(connector, [
     switch(results.response.entity) { // checking with option the user chose
       case "Rental help":
         session.send("Okay, I can help you with rental questions");
+        session.beginDialog('rentalHelp');
         break;
       case "Complaints and eviction":
         session.send("Okay, I can help you with complaint");
+        session.beginDialog('complaintsHelp');
         break;
       case "Something else":
         session.send("Okay, let's work this out..");
+        session.beginDialog('otherHelp');
         break;
     }
   }
 ]);
 
+bot.dialog('rentalHelp', [
+  function(session) {
+    session.send("Inside the rental help dialog");
+  }
+]);
+bot.dialog('complaintsHelp', [
+  function(session) {
+    session.send("Inside the complaints dialog");
+  } 
+]);
+bot.dialog('otherHelp', [
+  function(session) {
+    session.send("Inside the other help dialog");
+  }
+]);
 
 
+// dialog for rental help
+// dialog for complaints
+// dialog for everything else
 
 
 
