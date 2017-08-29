@@ -30,9 +30,21 @@ var connector = new builder.ChatConnector({
   appPassword: "ia6Zywk5SVBJRehLPio8uSk"
 });
 
-// Listen for messages from users 
-//app.post('/api/messages', connector.listen());
-var bot = new builder.UniversalBot(connector, [
+// setting up QnAMaker bot
+var recognizer = new cognitiveservices.QnAMakerRecognizer({
+  knowledgeBaseId: '9e1bc1bc-50d5-452d-a988-f14ca47eeeb0', 
+  subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
+  //top: 3
+  });
+  
+  var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
+  recognizers: [recognizer],
+  defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance in your state :)',
+  qnaThreshold: 0.3,
+  });
+
+// This is the default dialog that starts bot conversation
+var bot = new builder.UniversalBot(connector, [ 
   function(session) {
     session.send("Hiya, thanks for contacting the HUD Rental Assistance bot!");
     builder.Prompts.choice(session, "How can I help you?", 
@@ -40,18 +52,18 @@ var bot = new builder.UniversalBot(connector, [
     { listStyle: builder.ListStyle.button });
   },
   function(session, results) {
-    switch(results.response.entity) { // checking with option the user chose
+    switch(results.response.entity) { // checking which option the user clicked
       case "Rental help":
-        session.send("Okay, I can help you with rental questions");
         session.beginDialog('rentalHelp');
         break;
       case "Complaints and eviction":
-        session.send("Okay, I can help you with complaint");
         session.beginDialog('complaintsHelp');
         break;
       case "Something else":
-        session.send("Okay, let's work this out..");
         session.beginDialog('otherHelp');
+        break;
+      default: 
+        session.reset();
         break;
     }
   }
@@ -59,49 +71,31 @@ var bot = new builder.UniversalBot(connector, [
 
 bot.dialog('rentalHelp', [
   function(session) {
-    session.send("Inside the rental help dialog");
+    builder.Prompts.text(session, "In which state do you live? (please spell out)");
+  },
+  function(session, results) {
+    session.send(`Hmm, never been to ${results.response}`);
+    // start the QnA bot dialog
+    session.replaceDialog('QnAMaker');
   }
+  //session.endDialog("ending dialog and giving control back to default dialog");
 ]);
 bot.dialog('complaintsHelp', [
   function(session) {
-    session.send("Inside the complaints dialog");
+    session.send("If you have a housing complaint or you think you were discriminated against, file a complaint with HUD at https://portal.hud.gov/FHEO903/Form903/Form903Start.action");
+    session.endDialog("ending dialog and giving control back to default dialog");
   } 
 ]);
 bot.dialog('otherHelp', [
   function(session) {
-    session.send("Inside the other help dialog");
+    session.send("I will connect you with a human at HUD via live chat for these type of questions. Hang on ...");
+    session.send("Insert business logic here for bot handoff..");
+    session.endDialog("ending dialog and giving control back to default dialog");
   }
 ]);
-
-
-// dialog for rental help
-// dialog for complaints
-// dialog for everything else
-
-
+bot.dialog('QnAMaker', BasicQnAMakerDialog);
 
 app.post('/api/messages', connector.listen());
-
-// setting up QnAMaker bot
-var recognizer = new cognitiveservices.QnAMakerRecognizer({
-knowledgeBaseId: '9e1bc1bc-50d5-452d-a988-f14ca47eeeb0', 
-subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
-//top: 3
-});
-
-// Allows bot to train itself with user input
-// var qnaMakerTools = new cognitiveservices.QnAMakerTools();
-// bot.library(qnaMakerTools.createLibrary());
-
-var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
-recognizers: [recognizer],
-defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance in your state :)',
-qnaThreshold: 0.3,
-//feedbackLib: qnaMakerTools
-});
-
-// start the QnA bot dialog
-//bot.dialog('/', BasicQnAMakerDialog);
 
 
 
