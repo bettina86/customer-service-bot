@@ -32,13 +32,39 @@ var connector = new builder.ChatConnector({
 
 // Listen for messages from users 
 //app.post('/api/messages', connector.listen());
-var bot = new builder.UniversalBot(connector);
+var bot = new builder.UniversalBot(connector, [
+  function(session) {
+    session.send("Hiya, thanks for contacting the HUD Rental Assistance bot!");
+    builder.Prompts.choice(session, "How can I help you?", 
+    "Rental help|Complaints and eviction|Something else", 
+    { listStyle: builder.ListStyle.button });
+  },
+  function(session, results) {
+    switch(results.response.entity) { // checking with option the user chose
+      case "Rental help":
+        session.send("Okay, I can help you with rental questions");
+        break;
+      case "Complaints and eviction":
+        session.send("Okay, I can help you with complaint");
+        break;
+      case "Something else":
+        session.send("Okay, let's work this out..");
+        break;
+    }
+  }
+]);
+
+
+
+
+
+
 app.post('/api/messages', connector.listen());
 
-
+// setting up QnAMaker bot
 var recognizer = new cognitiveservices.QnAMakerRecognizer({
 knowledgeBaseId: '9e1bc1bc-50d5-452d-a988-f14ca47eeeb0', 
-subscriptionKey: '1efc68010d3c43bd8d274104169242ad',
+subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
 //top: 3
 });
 
@@ -53,10 +79,17 @@ qnaThreshold: 0.3,
 //feedbackLib: qnaMakerTools
 });
 
-// start the bot
-bot.dialog('/', BasicQnAMakerDialog);
+// start the QnA bot dialog
+//bot.dialog('/', BasicQnAMakerDialog);
 
 
+
+
+
+
+
+
+// Other Express stuff
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
