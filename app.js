@@ -76,7 +76,9 @@ bot.dialog('rentalHelp', [
   function(session, results) {
     session.send(`Hmm, never been to ${results.response}`);
     // start the QnA bot dialog
-    session.beginDialog('QnAMaker');
+    session.beginDialog('QnAMaker', function() {
+      console.log("inside qnamaker");
+    });
   }
 ]);
 bot.dialog('complaintsHelp', [
