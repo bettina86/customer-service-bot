@@ -76,9 +76,8 @@ bot.dialog('rentalHelp', [
   function(session, results) {
     session.send(`Hmm, never been to ${results.response}`);
     // start the QnA bot dialog
-    session.replaceDialog('QnAMaker');
+    session.beginDialog('QnAMaker');
   }
-  //session.endDialog("ending dialog and giving control back to default dialog");
 ]);
 bot.dialog('complaintsHelp', [
   function(session) {
@@ -96,13 +95,6 @@ bot.dialog('otherHelp', [
 bot.dialog('QnAMaker', BasicQnAMakerDialog);
 
 app.post('/api/messages', connector.listen());
-
-
-
-
-
-
-
 
 // Other Express stuff
 
