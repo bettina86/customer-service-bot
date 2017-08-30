@@ -78,8 +78,19 @@ bot.dialog('rentalHelp', [
     session.beginDialog('QnAMaker');
   },
   function(session, results) {
-    builder.Prompts.text(session, "");
-  }
+    builder.Prompts.confirm(session, "Do you want to ask me another question?");
+  },
+  function(session, results) {
+    if(!results.response) {
+      session.endDialog("Sounds good. Returning to main menu.");
+    }
+    else {
+      builder.Prompts.text(session, "How can I help you?");
+      }
+    },
+    function(session,results) {
+      session.beginDialog('QnAMaker');
+    }
 ]);
 bot.dialog('complaintsHelp', [
   function(session) {
