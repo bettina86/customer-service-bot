@@ -71,7 +71,7 @@ var bot = new builder.UniversalBot(connector, [
 
 bot.dialog('rentalHelp', [
   function(session) {
-    builder.Prompts.text(session, "In which state do you live? (please spell out)");
+    builder.Prompts.text(session, "What question do you have about rental help? You can enter the state in which you live for specific information.");
   },
   function(session, results) {
     // start the QnA bot dialog
@@ -85,11 +85,8 @@ bot.dialog('rentalHelp', [
       session.endDialog("Sounds good. Returning to main menu.");
     }
     else {
-      builder.Prompts.text(session, "How can I help you?");
+      session.replaceDialog('rentalHelp');
       }
-    },
-    function(session,results) {
-      session.beginDialog('QnAMaker');
     }
 ]);
 bot.dialog('complaintsHelp', [
