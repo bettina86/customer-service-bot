@@ -39,7 +39,7 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
   
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
   recognizers: [recognizer],
-  defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance in your state :)',
+  defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance.',
   qnaThreshold: 0.3,
   });
 
@@ -92,14 +92,14 @@ bot.dialog('rentalHelp', [
 bot.dialog('complaintsHelp', [
   function(session) {
     session.send("If you have a housing complaint or you think you were discriminated against, file a complaint with HUD at https://portal.hud.gov/FHEO903/Form903/Form903Start.action");
-    session.endDialog("ending dialog and giving control back to default dialog");
+    session.endDialog("Returning to main menu.");
   } 
 ]);
 bot.dialog('otherHelp', [
   function(session) {
     session.send("I will connect you with a human at HUD via live chat for these type of questions. Hang on ...");
     session.send("Insert business logic here for bot handoff..");
-    session.endDialog("ending dialog and giving control back to default dialog");
+    session.endDialog("Returning to main menu.");
   }
 ]);
 bot.dialog('QnAMaker', BasicQnAMakerDialog);
