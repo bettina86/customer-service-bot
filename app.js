@@ -46,9 +46,9 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 // This is the default dialog that starts bot conversation
 var bot = new builder.UniversalBot(connector, [ 
   function(session) {
-    session.send("Hiya, thanks for contacting the HUD Rental Assistance bot!");
+    session.send("Thank you for contacting the HUD customer service bot!");
     builder.Prompts.choice(session, "How can I help you?", 
-    "Rental help|Complaints and eviction|Something else", 
+    "Rental help|Complaints and discrimination|Something else|What can I do?", 
     { listStyle: builder.ListStyle.button });
   },
   function(session, results) {
@@ -56,11 +56,14 @@ var bot = new builder.UniversalBot(connector, [
       case "Rental help":
         session.beginDialog('rentalHelp');
         break;
-      case "Complaints and eviction":
+      case "Complaints and discrimination":
         session.beginDialog('complaintsHelp');
         break;
       case "Something else":
         session.beginDialog('otherHelp');
+        break;
+        case "What can I do?":
+        session.beginDialog('botAbility');
         break;
       default: 
         session.reset();
@@ -78,22 +81,35 @@ bot.dialog('rentalHelp', [
     session.beginDialog('QnAMaker');
   },
   function(session, results) {
-    builder.Prompts.confirm(session, "Do you want to ask me another question?");
+    builder.Prompts.confirm(session, "Do you want to ask me another question about rental help?");
   },
   function(session, results) {
-    if(!results.response) {
+    if(!results.response) { // if user said 'no'
       session.endDialog("Sounds good. Returning to main menu.");
     }
-    else {
+    else { // if user said 'yes'
       session.replaceDialog('rentalHelp');
       }
     }
 ]);
 bot.dialog('complaintsHelp', [
-  function(session) {
-    session.send("If you have a housing complaint or you think you were discriminated against, file a complaint with HUD at https://portal.hud.gov/FHEO903/Form903/Form903Start.action");
-    session.endDialog("Returning to main menu.");
-  } 
+  function(session, results) {
+    builder.Prompts.text(session, "What kind of complaint do you have? You can ask me about housing discrimination, Housing Choice Vouchers complaints, or property management complaints.");
+  },
+  function(session, results) {
+    session.beginDialog('QnAMaker');
+  },
+  function(session, results) {
+    builder.Prompts.confirm(session, "Do you have more discrimination complaint questions?");
+  },
+  function(session, results) {
+    if(!results.response) { // if user said 'no'
+      session.endDialog("Sounds good. Returning to main menu.");
+    }
+    else { // if user said 'yes'
+      session.replaceDialog('complaintsHelp');
+      }
+    }
 ]);
 bot.dialog('otherHelp', [
   function(session) {
@@ -102,6 +118,25 @@ bot.dialog('otherHelp', [
     session.endDialog("Returning to main menu.");
   }
 ]);
+bot.dialog('botAbility', [
+  function(session) {
+    session.send("Glad you asked! I'm a customer service bot that's built to answer your questions about HUD housing, rental help, and discimination and complaints.");
+    session.send("Never share personal or financial information with me. I'll never ask for this type of information.");
+    builder.Prompts.confirm(session, "Will you let my creators know how I'm doing by taking a quick survey?");
+  },
+  function(session, results) {
+    if(!results.response) {
+      session.send("No problem. Come back here anytime to give me feedback!");
+      session.endDialog("Returning to main menu.");
+    }
+    else {
+      session.send("Great! Follow this link to leave feedback (1 min. survey)\
+      https://goo.gl/forms/AMh2QTeEWNDPfS5a2")
+      session.endDialog();
+    }
+  }
+]);
+
 bot.dialog('QnAMaker', BasicQnAMakerDialog);
 
 app.post('/api/messages', connector.listen());
