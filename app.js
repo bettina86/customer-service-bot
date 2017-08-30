@@ -74,11 +74,11 @@ bot.dialog('rentalHelp', [
     builder.Prompts.text(session, "In which state do you live? (please spell out)");
   },
   function(session, results) {
-    session.send(`Hmm, never been to ${results.response}`);
     // start the QnA bot dialog
-    session.beginDialog('QnAMaker', function() {
-      console.log("inside qnamaker");
-    });
+    session.beginDialog('QnAMaker');
+  },
+  function(session, results) {
+    builder.Prompts.text(session, "");
   }
 ]);
 bot.dialog('complaintsHelp', [
@@ -97,6 +97,7 @@ bot.dialog('otherHelp', [
 bot.dialog('QnAMaker', BasicQnAMakerDialog);
 
 app.post('/api/messages', connector.listen());
+
 
 // Other Express stuff
 
