@@ -1,12 +1,16 @@
+/** Including libraries to make the server (Express) work */
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
+/** Including libraries to connect to the Microsoft Bot Framework */
 var builder = require('botbuilder');
 var cognitiveservices = require('botbuilder-cognitiveservices');
 
+/** Setting up the Express framework  */
 var index = require('./routes/index');
 var app = express();
 
@@ -22,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Setting the first page that displays at the index page
 app.use('/', index);
 
 // Create chat connector for communicating with the Bot Framework Service
@@ -30,20 +35,30 @@ var connector = new builder.ChatConnector({
   appPassword: "ia6Zywk5SVBJRehLPio8uSk"
 });
 
-// setting up QnAMaker bot
+
+/** QnA Maker knowledge base for rental assistance set up */
 var recognizer = new cognitiveservices.QnAMakerRecognizer({
   knowledgeBaseId: '9e1bc1bc-50d5-452d-a988-f14ca47eeeb0', 
   subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
   //top: 3
   });
-  
+
+  /** QnA Maker knowledge base for complaints set up */
+  var complaintKBRecognizer = new cognitiveservices.QnAMakerRecognizer({
+    knowledgeBaseId: '43791a27-d2d1-4212-be54-7da6ab61c784', 
+    subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
+    //top: 3
+    });
+
+
+  /** Initializing the QnA Maker knowledge bases*/
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
-  recognizers: [recognizer],
-  defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance.',
-  qnaThreshold: 0.3,
+    recognizers: [recognizer, complaintKBRecognizer], // QnA Maker loading both knowledge bases in this array
+    defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance.',
+    qnaThreshold: 0.3,
   });
 
-// This is the default dialog that starts bot conversation
+/** Creating the bot and setting up the default dialog that displays */
 var bot = new builder.UniversalBot(connector, [ 
   function(session) {
     session.send("Thank you for contacting the HUD customer service bot!");
@@ -66,19 +81,19 @@ var bot = new builder.UniversalBot(connector, [
         session.beginDialog('botAbility');
         break;
       default: 
-        session.reset();
+        session.reset(); // Start over this bot dialog
         break;
     }
   }
 ]);
 
+/** When rental help is chosen as the option, this dialog kicks off */
 bot.dialog('rentalHelp', [
   function(session) {
     builder.Prompts.text(session, "What question do you have about rental help? You can enter the state in which you live for specific information.");
   },
   function(session, results) {
-    // start the QnA bot dialog
-    session.beginDialog('QnAMaker');
+    session.beginDialog('QnAMaker'); // pass the user's question to the QnA Maker rental assistance knowledge base
   },
   function(session, results) {
     builder.Prompts.confirm(session, "Do you want to ask me another question about rental help?");
@@ -87,17 +102,19 @@ bot.dialog('rentalHelp', [
     if(!results.response) { // if user said 'no'
       session.endDialog("Sounds good. Returning to main menu.");
     }
-    else { // if user said 'yes'
+    else { // if user said 'yes' the rental help dialog simply starts over
       session.replaceDialog('rentalHelp');
       }
     }
 ]);
+
+/** When complaints and discrimination is chosen as the option, this dialog kicks off */
 bot.dialog('complaintsHelp', [
   function(session, results) {
     builder.Prompts.text(session, "What kind of complaint do you have? You can ask me about housing discrimination, Housing Choice Vouchers complaints, or property management complaints.");
   },
   function(session, results) {
-    session.beginDialog('QnAMaker');
+    session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker complaint knowledge base
   },
   function(session, results) {
     builder.Prompts.confirm(session, "Do you have more discrimination complaint questions?");
@@ -111,6 +128,8 @@ bot.dialog('complaintsHelp', [
       }
     }
 ]);
+
+/** This dialog is to facilitate transferring the user from bot to live chat person. TBD. */
 bot.dialog('otherHelp', [
   function(session) {
     session.send("I will connect you with a human at HUD via live chat for these type of questions. Hang on ...");
@@ -118,6 +137,8 @@ bot.dialog('otherHelp', [
     session.endDialog("Returning to main menu.");
   }
 ]);
+
+/** This dialog describes what the bot can do for the user and asks to complete a survey. */
 bot.dialog('botAbility', [
   function(session) {
     session.send("Glad you asked! I'm a customer service bot that's built to answer your questions about HUD housing, rental help, and discimination and complaints.");
@@ -137,13 +158,14 @@ bot.dialog('botAbility', [
   }
 ]);
 
+/** Creating the QnA Maker dialog for access during bot chat */
 bot.dialog('QnAMaker', BasicQnAMakerDialog);
 
+/** Express method that sends the user's question to '/api/message' route for handling */
 app.post('/api/messages', connector.listen());
 
 
-// Other Express stuff
-
+/** Other Express framework stuff unrelated to chat bot */
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
