@@ -69,9 +69,9 @@ var bot = new builder.UniversalBot(connector, [
 bot.dialog('menu', [
   function(session) {
     builder.Prompts.choice(session, "How can I help you?", 
-    "Rental help|Complaints and discrimination|Something else|What can I do?", 
+    "Rental help|Complaints and discrimination|Something else|Bot ability", 
     { listStyle: builder.ListStyle.button });
-    session.send('Say "human" to talk with a human.');
+    session.send('Say "human" to talk with a human. Say "menu" to return here.');
   },
   function(session, results) {
     switch(results.response.entity) { // checking which option the user clicked
@@ -84,7 +84,7 @@ bot.dialog('menu', [
       case "Something else":
         session.beginDialog('otherHelp');
         break;
-        case "What can I do?":
+        case "Bot ability":
         session.beginDialog('botAbility');
         break;
       default: 
@@ -98,13 +98,13 @@ bot.dialog('menu', [
 /** When rental help is chosen as the option, this dialog kicks off */
 bot.dialog('rentalHelp', [
   function(session) {
-    builder.Prompts.text(session, "What question do you have about rental help? You can enter the state in which you live for specific information.");
+    builder.Prompts.text(session, "You can enter the state in which you live for specific rental help.");
   },
   function(session, results) {
-    session.beginDialog('QnAMaker'); // pass the user's question to the QnA Maker rental assistance knowledge base
+    session.beginDialog('QnAMaker'); // pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    session.send("You can ask more questions about rental assistance or type 'menu' to go back to the main menu.")
+    session.send("I hope that helps, or you can ask another question.")
     session.replaceDialog('rentalHelp');
   }
 ]);
@@ -112,22 +112,15 @@ bot.dialog('rentalHelp', [
 /** When complaints and discrimination is chosen as the option, this dialog kicks off */
 bot.dialog('complaintsHelp', [
   function(session, results) {
-    builder.Prompts.text(session, "What kind of complaint do you have? You can ask me about housing discrimination, Housing Choice Vouchers complaints, or property management complaints.");
+    builder.Prompts.text(session, "You can ask me about housing discrimination, Housing Choice Vouchers complaints, or property management complaints.");
   },
   function(session, results) {
-    session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker complaint knowledge base
+    session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    builder.Prompts.confirm(session, "Do you have more discrimination complaint questions?");
-  },
-  function(session, results) {
-    if(!results.response) { // if user said 'no'
-      session.endDialog("Sounds good. Returning to main menu.");
-    }
-    else { // if user said 'yes'
-      session.replaceDialog('complaintsHelp');
-      }
-    }
+    session.send("I hope that helps, or you can ask another question.")
+    session.replaceDialog('complaintsHelp');
+  }
 ]);
 
 /** This dialog is to facilitate transferring the user from bot to live chat person. TBD. */
@@ -150,11 +143,11 @@ bot.dialog('botAbility', [
   },
   function(session, results) {
     if(!results.response) {
-      session.send("No problem. Come back here anytime to give me feedback!");
-      session.endDialog("Returning to main menu.");
+      session.send("No problem. Come back here anytime to learn about me and give me feedback!");
+      session.replaceDialog('menu');
     }
     else {
-      session.send("Great! Follow this link to leave feedback (1 min. survey)\
+      session.send("Thanks! Follow this link to leave feedback (1 min. survey)\
       https://goo.gl/forms/AMh2QTeEWNDPfS5a2")
       session.endDialog();
     }
