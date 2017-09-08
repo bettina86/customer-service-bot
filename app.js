@@ -62,9 +62,16 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 var bot = new builder.UniversalBot(connector, [ 
   function(session) {
     session.send("Thank you for contacting the HUD customer service bot!");
+    session.beginDialog('menu');
+  }
+]);
+
+bot.dialog('menu', [
+  function(session) {
     builder.Prompts.choice(session, "How can I help you?", 
     "Rental help|Complaints and discrimination|Something else|What can I do?", 
     { listStyle: builder.ListStyle.button });
+    session.send('Say "human" to talk with a human.');
   },
   function(session, results) {
     switch(results.response.entity) { // checking which option the user clicked
@@ -81,11 +88,12 @@ var bot = new builder.UniversalBot(connector, [
         session.beginDialog('botAbility');
         break;
       default: 
-        session.reset(); // Start over this bot dialog
+        session.reset(); // Start over this dialog
         break;
     }
-  }
-]);
+  }]).triggerAction({
+    matches: /menu/i
+  });
 
 /** When rental help is chosen as the option, this dialog kicks off */
 bot.dialog('rentalHelp', [
@@ -96,16 +104,9 @@ bot.dialog('rentalHelp', [
     session.beginDialog('QnAMaker'); // pass the user's question to the QnA Maker rental assistance knowledge base
   },
   function(session, results) {
-    builder.Prompts.confirm(session, "Do you want to ask me another question about rental help?");
-  },
-  function(session, results) {
-    if(!results.response) { // if user said 'no'
-      session.endDialog("Sounds good. Returning to main menu.");
-    }
-    else { // if user said 'yes' the rental help dialog simply starts over
-      session.replaceDialog('rentalHelp');
-      }
-    }
+    session.send("You can ask more questions about rental assistance or type 'menu' to go back to the main menu.")
+    session.replaceDialog('rentalHelp');
+  }
 ]);
 
 /** When complaints and discrimination is chosen as the option, this dialog kicks off */
@@ -132,11 +133,13 @@ bot.dialog('complaintsHelp', [
 /** This dialog is to facilitate transferring the user from bot to live chat person. TBD. */
 bot.dialog('otherHelp', [
   function(session) {
-    session.send("I will connect you with a human at HUD via live chat for these type of questions. Hang on ...");
+    session.send("Connecting you with a human at HUD...");
     session.send("Insert business logic here for bot handoff..");
-    session.endDialog("Returning to main menu.");
+    session.endConversation();
   }
-]);
+]).triggerAction({
+  matches: /human/i
+});;
 
 /** This dialog describes what the bot can do for the user and asks to complete a survey. */
 bot.dialog('botAbility', [
