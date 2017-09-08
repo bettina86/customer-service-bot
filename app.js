@@ -60,9 +60,9 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 
   /** Initializing the QnA Maker knowledge bases*/
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
-    recognizers: [recognizer, complaintKBRecognizer, programDescKBRecognizer], // QnA Maker loading both knowledge bases in this array
+    recognizers: [recognizer, complaintKBRecognizer, programDescKBRecognizer], // QnA Maker loading knowledge bases in this array
     defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human".',
-    qnaThreshold: 0.3,
+    qnaThreshold: 0.3
   });
 
 /** Creating the bot and setting up the default dialog that displays */
@@ -76,7 +76,7 @@ var bot = new builder.UniversalBot(connector, [
 bot.dialog('menu', [
   function(session) {
     builder.Prompts.choice(session, "How can I help you?", 
-    "Rental help|Complaints and discrimination|Something else|Bot ability", 
+    "Rental help|Complaints and discrimination|HUD program information|Bot ability", 
     { listStyle: builder.ListStyle.button });
     session.send('Say "human" to talk with a human. Say "menu" to return here.');
   },
@@ -88,8 +88,8 @@ bot.dialog('menu', [
       case "Complaints and discrimination":
         session.beginDialog('complaintsHelp');
         break;
-      case "Something else":
-        session.beginDialog('otherHelp');
+      case "HUD program information":
+        session.beginDialog('programInfo');
         break;
         case "Bot ability":
         session.beginDialog('botAbility');
@@ -130,8 +130,21 @@ bot.dialog('complaintsHelp', [
   }
 ]);
 
+bot.dialog('programInfo', [
+  function(session) {
+    builder.Prompts.text(session, "What questions do you have about HUD programs and services?");
+  },
+  function(session, results) {
+    session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
+  },
+  function(session, results) {
+    session.send("I hope that helps, or you can ask another question.")
+    session.replaceDialog('programInfo');
+  }
+])
+
 /** This dialog is to facilitate transferring the user from bot to live chat person. TBD. */
-bot.dialog('otherHelp', [
+bot.dialog('humanHelp', [
   function(session) {
     session.send("Connecting you with a human at HUD...");
     session.send("Insert business logic here for bot handoff..");
