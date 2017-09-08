@@ -43,9 +43,16 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
   //top: 3
   });
 
-  /** QnA Maker knowledge base for complaints set up */
+  /** QnA Maker knowledge base for complaints and discrimination set up */
   var complaintKBRecognizer = new cognitiveservices.QnAMakerRecognizer({
     knowledgeBaseId: '43791a27-d2d1-4212-be54-7da6ab61c784', 
+    subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
+    //top: 3
+    });
+
+    /** QnA Maker knowledge base for HUD program descriptions set up */
+  var programDescKBRecognizer = new cognitiveservices.QnAMakerRecognizer({
+    knowledgeBaseId: 'b2210c53-1441-4bf4-a1d8-7d0ddb1d632f', 
     subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
     //top: 3
     });
@@ -53,8 +60,8 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 
   /** Initializing the QnA Maker knowledge bases*/
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
-    recognizers: [recognizer, complaintKBRecognizer], // QnA Maker loading both knowledge bases in this array
-    defaultMessage: 'I didn\'t find a good answer for that and am still learning. I\'m most helpful when you ask me about rental assistance.',
+    recognizers: [recognizer, complaintKBRecognizer, programDescKBRecognizer], // QnA Maker loading both knowledge bases in this array
+    defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human".',
     qnaThreshold: 0.3,
   });
 
