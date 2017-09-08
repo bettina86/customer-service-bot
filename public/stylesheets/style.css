@@ -4,7 +4,11 @@
 }
 
 #container {
-  width:400px;
+  width:600px;
   margin: 0 auto;
 
+}
+
+.alert-custom {
+  margin-top:0px;
 }
