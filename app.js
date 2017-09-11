@@ -108,6 +108,7 @@ bot.dialog('rentalHelp', [
     builder.Prompts.text(session, "You can enter the state in which you live for specific rental help.");
   },
   function(session, results) {
+    session.sendTyping();
     session.beginDialog('QnAMaker'); // pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
@@ -122,6 +123,7 @@ bot.dialog('complaintsHelp', [
     builder.Prompts.text(session, "You can ask me about housing discrimination, Housing Choice Vouchers complaints, or property management complaints.");
   },
   function(session, results) {
+    session.sendTyping();
     session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
@@ -135,6 +137,7 @@ bot.dialog('programInfo', [
     builder.Prompts.text(session, "What questions do you have about HUD programs and services?");
   },
   function(session, results) {
+    session.sendTyping();
     session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
