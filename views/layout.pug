@@ -6,4 +6,40 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     block content
+    footer.usa-footer.usa-footer-big(role='contentinfo')
+      .usa-grid.usa-footer-return-to-top
+        a(href='#') Return to top
+      .usa-footer-primary-section
+        .usa-grid-full
+          nav.usa-footer-nav.usa-width-two-thirds
+            ul.usa-unstyled-list.usa-width-one-fourth.usa-footer-primary-content
+              li.usa-footer-primary-link
+                h4 About this prototype
+              li
+                a(href='https://dev.botframework.com', target='_blank') Microsoft Bot Framework
+              li
+                a(href='https://qnamaker.ai', target='_blank') QnAMaker
+              li
+                a(href='https://nodejs.org/en/', target='_blank') NodeJS
+              li
+                a(href='https://expressjs.com', target='_blank') Express
+              li
+                a(href='https://github.com/HUD-Digital-Services/customer-service-bot', target='_blank') GitHub
+          .usa-sign_up-block.usa-width-one-third
+            h3.usa-sign_up-header Sign up
+            label(for='email', id='') Your email address
+            input#email(name='email', type='email')
+            button(type='submit') Sign up
+      .usa-footer-secondary_section.usa-footer-big-secondary-section
+        .usa-grid
+          .usa-footer-logo.usa-width-one-half
+            img(width='100px;', height='100px;', src='/images/hudseal.svg', alt='Seal of the Department of Housing and Urban Development')
+            h3.usa-footer-logo-heading U.S. Department of Housing and Urban Development
+          .usa-footer-contact-links.usa-width-one-half
+            a.usa-link-facebook(href='https://www.facebook.com/HUD/')
+              span Facebook
+            a.usa-link-twitter(href='https://twitter.com/HUDgov')
+              span Twitter
+            a.usa-link-youtube(href='https://www.youtube.com/user/HUDchannel')
+              span YouTube
     script(src='/javascripts/uswds.min.js')
