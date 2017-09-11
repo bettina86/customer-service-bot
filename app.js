@@ -35,7 +35,6 @@ var connector = new builder.ChatConnector({
   appPassword: "ia6Zywk5SVBJRehLPio8uSk"
 });
 
-
 /** QnA Maker knowledge base for rental assistance set up */
 var recognizer = new cognitiveservices.QnAMakerRecognizer({
   knowledgeBaseId: '9e1bc1bc-50d5-452d-a988-f14ca47eeeb0', 
