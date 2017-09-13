@@ -75,19 +75,19 @@ var bot = new builder.UniversalBot(connector, [
 bot.dialog('menu', [
   function(session) {
     builder.Prompts.choice(session, "How can I help you?", 
-    "Rental help|Complaints and discrimination|HUD program information|Bot ability", 
+    "Low income renting assistance|Complaints and discrimination|Questions about HUD programs|Bot ability", 
     { listStyle: builder.ListStyle.button });
     session.send('Say "human" to talk with a human. Say "menu" to return here.');
   },
   function(session, results) {
     switch(results.response.entity) { // checking which option the user clicked
-      case "Rental help":
+      case "Low income renting assistance":
         session.beginDialog('rentalHelp');
         break;
       case "Complaints and discrimination":
         session.beginDialog('complaintsHelp');
         break;
-      case "HUD program information":
+      case "Questions about HUD programs":
         session.beginDialog('programInfo');
         break;
         case "Bot ability":
@@ -101,17 +101,20 @@ bot.dialog('menu', [
     matches: /menu/i
   });
 
+
 /** When rental help is chosen as the option, this dialog kicks off */
 bot.dialog('rentalHelp', [
   function(session) {
-    builder.Prompts.text(session, "You can enter the state in which you live for specific rental help.");
+      builder.Prompts.text(session, "Ask about low income housing and renting. You can enter the state in which you live for specific rental help.")
   },
   function(session, results) {
     session.sendTyping();
     session.beginDialog('QnAMaker'); // pass the user's question to the QnA Maker knowledge base
+
   },
   function(session, results) {
     session.send("I hope that helps, or you can ask another question.")
+    session.userData.alreadyAsked = true;
     session.replaceDialog('rentalHelp');
   }
 ]);
@@ -160,12 +163,12 @@ bot.dialog('humanHelp', [
 bot.dialog('botAbility', [
   function(session) {
     session.send("Glad you asked! I'm a customer service bot that's built to answer your questions about HUD housing, rental help, and discimination and complaints.");
-    session.send("Never share personal or financial information with me. I'll never ask for this type of information.");
-    builder.Prompts.confirm(session, "Will you let my creators know how I'm doing by taking a quick survey?");
+    session.send("Do NOT share personal or financial information with me. I'll never ask for this type of information.");
+    builder.Prompts.confirm(session, "Will you let my creators know how I'm doing by taking a 1 minute survey?");
   },
   function(session, results) {
     if(!results.response) {
-      session.send("No problem. Come back here anytime to learn about me and give me feedback!");
+      session.send("No problem. Come back here anytime to learn about me and give feedback!");
       session.replaceDialog('menu');
     }
     else {
@@ -175,6 +178,8 @@ bot.dialog('botAbility', [
     }
   }
 ]);
+
+BasicQnAMakerDialog.alreadyAsked
 
 /** Creating the QnA Maker dialog for access during bot chat */
 bot.dialog('QnAMaker', BasicQnAMakerDialog);
