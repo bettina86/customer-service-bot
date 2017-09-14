@@ -118,7 +118,24 @@ bot.dialog('rentalHelp', [
     session.userData.alreadyAsked = true;
     session.replaceDialog('rentalHelp');
   }
-]);
+]).beginDialogAction('handleHellos', 'helloDialog', {
+  onFindAction: function(context, callback) {
+    switch(context.message.text.toLowerCase()) {
+      case 'hello':
+        callback(null, 1.0, {topic: 'helloDialog'});
+        break;
+        case 'hello?':
+          callback(null, 1.0, {topic: 'helloDialog'});
+          break;
+        case 'are you there?':
+          callback(null, 1.0, {topic: 'helloDialog'});
+          break;
+      default:
+        callback(null, 0.0);
+        break;
+    }
+  }
+});
 
 /** When complaints and discrimination is chosen as the option, this dialog kicks off */
 bot.dialog('complaintsHelp', [
@@ -133,7 +150,24 @@ bot.dialog('complaintsHelp', [
     session.send("I hope that helps. You can ask another question about complaints and discrimination, or type 'menu' for other options.")
     session.replaceDialog('complaintsHelp');
   }
-]);
+]).beginDialogAction('handleHellos', 'helloDialog', {
+  onFindAction: function(context, callback) {
+    switch(context.message.text.toLowerCase()) {
+      case 'hello':
+        callback(null, 1.0, {topic: 'helloDialog'});
+        break;
+        case 'hello?':
+          callback(null, 1.0, {topic: 'helloDialog'});
+          break;
+        case 'are you there?':
+          callback(null, 1.0, {topic: 'helloDialog'});
+          break;
+      default:
+        callback(null, 0.0);
+        break;
+    }
+  }
+});
 
 bot.dialog('programInfo', [
   function(session) {
@@ -147,7 +181,24 @@ bot.dialog('programInfo', [
     session.send("I hope that helps. You can ask another question about HUD programs, or type 'menu' for other options.")
     session.replaceDialog('programInfo');
   }
-])
+]).beginDialogAction('handleHellos', 'helloDialog', {
+  onFindAction: function(context, callback) {
+    switch(context.message.text.toLowerCase()) {
+      case 'hello':
+        callback(null, 1.0, {topic: 'helloDialog'});
+        break;
+        case 'hello?':
+          callback(null, 1.0, {topic: 'helloDialog'});
+          break;
+        case 'are you there?':
+          callback(null, 1.0, {topic: 'helloDialog'});
+          break;
+      default:
+        callback(null, 0.0);
+        break;
+    }
+  }
+});
 
 /** This dialog is to facilitate transferring the user from bot to live chat person. TBD. */
 bot.dialog('humanHelp', [
@@ -158,7 +209,14 @@ bot.dialog('humanHelp', [
   }
 ]).triggerAction({
   matches: /human/i
-});;
+});
+
+/** This dialog handles the user saying hello. */
+bot.dialog('helloDialog', 
+  function(session) {
+    session.send("I'm here and listening. Sometimes I'm slow!");
+    session.endDialog();
+  });
 
 /** This dialog describes what the bot can do for the user and asks to complete a survey. */
 bot.dialog('botAbility', [
