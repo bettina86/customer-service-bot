@@ -58,9 +58,23 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
     });
 
 
-  /** Initializing the QnA Maker knowledge bases*/
+  /** Initializing the QnA Maker knowledge base*/
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
-    recognizers: [recognizer, complaintKBRecognizer, programDescKBRecognizer], // QnA Maker loading knowledge bases in this array
+    recognizers: [recognizer], // QnA Maker loading knowledge base in this array
+    defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human" to start live chatting with HUD customer service.',
+    qnaThreshold: 0.3
+  });
+
+   /** Initializing the QnA Maker knowledge base*/
+   var ComplaintsQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
+    recognizers: [complaintKBRecognizer], // QnA Maker loading knowledge base in this array
+    defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human" to start live chatting with HUD customer service.',
+    qnaThreshold: 0.3
+  });
+
+   /** Initializing the QnA Maker knowledge base*/
+   var HUDProgramInfoQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
+    recognizers: [programDescKBRecognizer], // QnA Maker loading knowledge base in this array
     defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human" to start live chatting with HUD customer service.',
     qnaThreshold: 0.3
   });
@@ -110,7 +124,7 @@ bot.dialog('rentalHelp', [
   },
   function(session, results) {
     session.sendTyping();
-    session.beginDialog('QnAMaker'); // pass the user's question to the QnA Maker knowledge base
+    session.beginDialog('RentalQnAMaker'); // pass the user's question to the QnA Maker knowledge base
 
   },
   function(session, results) {
@@ -144,7 +158,7 @@ bot.dialog('complaintsHelp', [
   },
   function(session, results) {
     session.sendTyping();
-    session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
+    session.beginDialog('ComplaintQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
     session.send("I hope that helps. You can ask another question about complaints and discrimination, or type 'menu' for other options.")
@@ -175,7 +189,7 @@ bot.dialog('programInfo', [
   },
   function(session, results) {
     session.sendTyping();
-    session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
+    session.beginDialog('HUDProgramInfoQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
     session.send("I hope that helps. You can ask another question about HUD programs, or type 'menu' for other options.")
@@ -238,10 +252,10 @@ bot.dialog('botAbility', [
   }
 ]);
 
-BasicQnAMakerDialog.alreadyAsked
-
 /** Creating the QnA Maker dialog for access during bot chat */
-bot.dialog('QnAMaker', BasicQnAMakerDialog);
+bot.dialog('RentalQnAMaker', BasicQnAMakerDialog);
+bot.dialog('ComplaintQnAMaker', ComplaintsQnAMakerDialog);
+bot.dialog('HUDProgramInfoQnAMaker', HUDProgramInfoQnAMakerDialog);
 
 /** Express method that sends the user's question to '/api/message' route for handling */
 app.post('/api/messages', connector.listen());
