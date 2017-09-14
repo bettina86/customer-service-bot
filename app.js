@@ -1,3 +1,4 @@
+'use strict';
 /** Including libraries to make the server (Express) work */
 var express = require('express');
 var path = require('path');
@@ -60,7 +61,7 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
   /** Initializing the QnA Maker knowledge bases*/
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
     recognizers: [recognizer, complaintKBRecognizer, programDescKBRecognizer], // QnA Maker loading knowledge bases in this array
-    defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human".',
+    defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human" to start live chatting with HUD customer service.',
     qnaThreshold: 0.3
   });
 
@@ -77,7 +78,7 @@ bot.dialog('menu', [
     builder.Prompts.choice(session, "How can I help you?", 
     "Low income renting assistance|Complaints and discrimination|Questions about HUD programs|Bot ability", 
     { listStyle: builder.ListStyle.button });
-    session.send('Say "human" to talk with a human. Say "menu" to return here.');
+    session.send('Say "menu" to return to these options.');
   },
   function(session, results) {
     switch(results.response.entity) { // checking which option the user clicked
