@@ -65,10 +65,10 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
     qnaThreshold: 0.3
   });
 
-/** Creating the bot and setting up the default dialog that displays */
+/** Creating the bot and setting up the default dialog that displays to the user */
 var bot = new builder.UniversalBot(connector, [ 
   function(session) {
-    session.send("Thank you for contacting the HUD customer service bot!");
+    session.send("Welcome to the HUD customer service bot! This bot is still in development and not fully functioning.");
     session.beginDialog('menu');
   }
 ]);
@@ -76,22 +76,22 @@ var bot = new builder.UniversalBot(connector, [
 bot.dialog('menu', [
   function(session) {
     builder.Prompts.choice(session, "How can I help you?", 
-    "Low income renting assistance|Complaints and discrimination|Questions about HUD programs|Bot ability", 
+    "Rental help in your state|Complaints and discrimination|Info about HUD programs|About the bot", 
     { listStyle: builder.ListStyle.button });
     session.send('Say "menu" to return to these options.');
   },
   function(session, results) {
     switch(results.response.entity) { // checking which option the user clicked
-      case "Low income renting assistance":
+      case "Rental help in your state":
         session.beginDialog('rentalHelp');
         break;
       case "Complaints and discrimination":
         session.beginDialog('complaintsHelp');
         break;
-      case "Questions about HUD programs":
+      case "Info about HUD programs":
         session.beginDialog('programInfo');
         break;
-        case "Bot ability":
+        case "About the bot":
         session.beginDialog('botAbility');
         break;
       default: 
@@ -114,7 +114,7 @@ bot.dialog('rentalHelp', [
 
   },
   function(session, results) {
-    session.send("I hope that helps, or you can ask another question.")
+    session.send("I hope that helps. You can ask another question about rental help, or type 'menu' for other options.")
     session.userData.alreadyAsked = true;
     session.replaceDialog('rentalHelp');
   }
@@ -130,7 +130,7 @@ bot.dialog('complaintsHelp', [
     session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    session.send("I hope that helps, or you can ask another question.")
+    session.send("I hope that helps. You can ask another question about complaints and discrimination, or type 'menu' for other options.")
     session.replaceDialog('complaintsHelp');
   }
 ]);
@@ -144,7 +144,7 @@ bot.dialog('programInfo', [
     session.beginDialog('QnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    session.send("I hope that helps, or you can ask another question.")
+    session.send("I hope that helps. You can ask another question about HUD programs, or type 'menu' for other options.")
     session.replaceDialog('programInfo');
   }
 ])
@@ -153,7 +153,7 @@ bot.dialog('programInfo', [
 bot.dialog('humanHelp', [
   function(session) {
     session.send("Connecting you with a human at HUD...");
-    session.send("Insert business logic here for bot handoff..");
+    session.send("Bot handoff is not yet functioning. Type 'menu' for other options.");
     session.endConversation();
   }
 ]).triggerAction({
