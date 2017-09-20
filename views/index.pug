@@ -2,13 +2,12 @@ extends layout
     
 block content
   .usa-grid
-    .usa-width-one-third
-      img(width='100px;', height='100px;', src='/images/hudseal.svg', alt='Seal of the Department of Housing and Urban Development')
-    .usa-width-two-thirds
-      p.usa-alert-text
-        | This is an alpha service. We need your 
-        a(target='_blank', href='https://www.surveymonkey.com/r/69FDG77') feedback
-        |  to improve it.
+| img(width='50px;', height='50px;', src='/images/hudseal.svg', alt='Seal of the Department of Housing and Urban Development')
+.usa-alert.usa-alert-info
+  .usa-alert-body
+    h3.usa-alert-heading  This is an alpha service. 
+    p.usa-alert-text
+      | We need your a(target='_blank', href='https://www.surveymonkey.com/r/69FDG77') feedback to improve it.
   #container
     h1= title
     p This is a test bot and cannot give assistance. Please go to HUD.gov for help.
