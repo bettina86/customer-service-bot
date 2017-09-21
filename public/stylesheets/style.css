@@ -12,3 +12,14 @@
 .alert-custom {
   margin-top:0px;
 }
+
+#agency-header-bar {
+  background: #112e51;
+  padding:1em;
+}
+
+#agency-header-bar h3 { 
+  display:inline;
+  color:#ffffff;
+  margin-left:1em;
+}
