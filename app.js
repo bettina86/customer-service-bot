@@ -90,7 +90,7 @@ bot.on('conversationUpdate', function(activity) {
     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
-        console.log("logging out activity obj: " + activity);
+        console.log(activity);
         bot.beginDialog(activity.address, '*:/');
       }
     });
