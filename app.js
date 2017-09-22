@@ -90,13 +90,13 @@ bot.on('conversationUpdate', function(message) {
     message.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === message.address.bot.id) {
         bot.send(hello);
-        bot.beginDialog(message.address, 'menu');
+        bot.beginDialog(message.address, '*:/');
       }
     });
   }
 });
 
-bot.dialog('menu', [
+bot.dialog('/', [
   function(session) {
     builder.Prompts.choice(session, "How can I help you?", 
     "Rental help in your state|Complaints and discrimination|Info about HUD programs|About the bot", 
