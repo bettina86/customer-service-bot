@@ -83,7 +83,6 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 var bot = new builder.UniversalBot(connector);
 
 bot.on('conversationUpdate', function(activity) {
-  console.log("logging out activity obj: " + activity);
   if (activity.membersAdded) {
     const hello = new builder.Message()
     .address(activity.address)
@@ -91,6 +90,7 @@ bot.on('conversationUpdate', function(activity) {
     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
+        console.log("logging out activity obj: " + activity);
         bot.beginDialog(activity.address, '*:/');
       }
     });
