@@ -128,8 +128,6 @@ bot.dialog('rentalHelp', [
 
   },
   function(session, results) {
-    session.send("I hope that helps. You can ask another question about rental help, or type 'menu' for other options.")
-    session.userData.alreadyAsked = true;
     session.replaceDialog('rentalHelp');
   }
 ]).beginDialogAction('handleHellos', 'helloDialog', {
@@ -161,7 +159,6 @@ bot.dialog('complaintsHelp', [
     session.beginDialog('ComplaintQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    session.send("I hope that helps. You can ask another question about complaints and discrimination, or type 'menu' for other options.")
     session.replaceDialog('complaintsHelp');
   }
 ]).beginDialogAction('handleHellos', 'helloDialog', {
@@ -192,7 +189,6 @@ bot.dialog('programInfo', [
     session.beginDialog('HUDProgramInfoQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    session.send("I hope that helps. You can ask another question about HUD programs, or type 'menu' for other options.")
     session.replaceDialog('programInfo');
   }
 ]).beginDialogAction('handleHellos', 'helloDialog', {
