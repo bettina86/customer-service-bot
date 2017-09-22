@@ -83,6 +83,7 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 var bot = new builder.UniversalBot(connector);
 
 bot.on('conversationUpdate', function(activity) {
+  console.log(activity);
   if (activity.membersAdded) {
     const hello = new builder.Message()
     .address(activity.address)
