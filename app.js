@@ -92,14 +92,14 @@ bot.on('conversationUpdate', function(activity) {
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
         console.log(activity);
-        bot.beginDialog(activity.address, 'menu');
+        bot.beginDialog(activity.address, '*:/');
       }
     });
   }
 });
 
 
-bot.dialog('menu', [
+bot.dialog('/', [
   function(session) {
     builder.Prompts.choice(session, "How can I help you?", 
     "Rental help in your state|Complaints and discrimination|Info about HUD programs|About the bot", 
