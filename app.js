@@ -82,21 +82,20 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 /** Creating the bot and setting up the default dialog that displays to the user */
 var bot = new builder.UniversalBot(connector);
 
-bot.on('conversationUpdate', function(activity) {
-  console.log(activity);
-  if (activity.membersAdded) {
-    const hello = new builder.Message()
-    .address(activity.address)
-    .text("Welcome to the HUD customer service bot! I'm not yet fully functioning.");
-    activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
-      if (identity.id === activity.address.bot.id) {
-        bot.send(hello);
-        console.log(activity);
-        bot.beginDialog(activity.address, '*:/');
-      }
-    });
-  }
-});
+// bot.on('conversationUpdate', function(activity) {
+//   if (activity.membersAdded) {
+//     const hello = new builder.Message()
+//     .address(activity.address)
+//     .text("Welcome to the HUD customer service bot! I'm not yet fully functioning.");
+//     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
+//       if (identity.id === activity.address.bot.id) {
+//         bot.send(hello);
+//         console.log('address is: ', activity.address);
+//         bot.beginDialog(activity.address, '*:/');
+//       }
+//     });
+//   }
+// });
 
 
 bot.dialog('/', [
