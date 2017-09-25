@@ -251,7 +251,7 @@ bot.dialog('botAbility', [
     }
     else {
       session.send("Thanks! Follow this link to leave feedback (1 min. survey)\
-      https://goo.gl/forms/AMh2QTeEWNDPfS5a2")
+      https://www.surveymonkey.com/r/69FDG77")
       session.endDialog();
     }
   }
