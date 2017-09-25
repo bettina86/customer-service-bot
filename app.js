@@ -86,23 +86,22 @@ bot.on('conversationUpdate', function(activity) {
   if (activity.membersAdded) {
     const hello = new builder.Message()
     .address(activity.address)
-    .text("Welcome to the HUD customer service bot! I'm not yet fully functioning.");
+    .text("Welcome to the HUD customer service bot! I'm not yet fully functioning. Type 'menu' to get started.");
     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
-        //bot.beginDialog(activity.address, '*:/');
       }
     });
   }
 });
 
-
 bot.dialog('/', [
   function(session) {
+    session.userData.firstRun = true;
     builder.Prompts.choice(session, "How can I help you?", 
     "Rental help in your state|Complaints and discrimination|Info about HUD programs|About the bot", 
     { listStyle: builder.ListStyle.button });
-    session.send('Say "menu" to return to these options.');
+    session.send('Type "menu" to return to these options.');
   },
   function(session, results) {
     switch(results.response.entity) { // checking which option the user clicked
@@ -248,7 +247,7 @@ bot.dialog('botAbility', [
   function(session, results) {
     if(!results.response) {
       session.send("No problem. Come back here anytime to learn about me and give feedback!");
-      session.replaceDialog('menu');
+      session.replaceDialog('/');
     }
     else {
       session.send("Thanks! Follow this link to leave feedback (1 min. survey)\
