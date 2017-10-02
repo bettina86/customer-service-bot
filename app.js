@@ -98,7 +98,7 @@ bot.on('conversationUpdate', function(activity) {
 bot.dialog('/', [
   function(session) {
     session.userData.firstRun = true;
-    builder.Prompts.choice(session, "How can I help you?", 
+    builder.Prompts.choice(session, "Click an option from the menu.", 
     "Rental help in your state|Complaints and discrimination|Info about HUD programs|About the bot", 
     { listStyle: builder.ListStyle.button });
     session.send('Type "menu" to return to these options.');
