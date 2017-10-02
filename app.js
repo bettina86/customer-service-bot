@@ -15,10 +15,8 @@ var cognitiveservices = require('botbuilder-cognitiveservices');
 var index = require('./routes/index');
 var app = express();
 
-/** Bot global vars */
-let complaintFirstRun = true;
-let rentalFirstRun = true;
-let programFirstRun = true;
+/** Bot global variables */
+let firstRunKB = true;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -62,27 +60,19 @@ bot.on('conversationUpdate', function(activity) {
   if (activity.membersAdded) {
     const hello = new builder.Message()
     .address(activity.address)
-    .text("Welcome to the HUD customer service bot! I can answer questions about HUD's programs, what to do if you are discriminated against and give you state level local contact information. Type 'menu' to get started.");
+    .text("Welcome to the HUD customer service bot! I can answer questions about HUD's programs, what to do if you are discriminated against and give you state level local contact information. Type 'human' to talk with somone at HUD. Type 'info' to learn about this bot.");
     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
+        bot.beginDialog(activity.address, '*:/');
       }
     });
   }
 });
 
-bot.dialog('/',
+bot.dialog('/', [
   function(session) {
-    session.userData.firstRun = true;
-    session.send('Type "human" to talk with somone at HUD. Type "info" to learn about this bot.');
-    session.beginDialog("rentalHelp");
-  });
-
-
-/** When rental help is chosen as the option, this dialog kicks off */
-bot.dialog('rentalHelp', [
-  function(session) {
-    if (rentalFirstRun == true) {
+   if (firstRunKB == true) {
       builder.Prompts.text(session, "How can I help?");
     } else {
       builder.Prompts.text(session, "Ready for another question.");      
@@ -93,9 +83,10 @@ bot.dialog('rentalHelp', [
     session.beginDialog('RentalQnAMaker'); // pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    rentalFirstRun = false; // user asked at least one question so adjust the bot dialog
-    session.replaceDialog('rentalHelp');
+    firstRunKB = false; // user asked at least one question so adjust the bot dialog
+    session.replaceDialog('/');
   }
+
 ]).beginDialogAction('handleHellos', 'helloDialog', {
   onFindAction: function(context, callback) {
     switch(context.message.text.toLowerCase()) {
