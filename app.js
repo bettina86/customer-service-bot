@@ -65,8 +65,6 @@ bot.on('conversationUpdate', function(activity) {
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
         bot.beginDialog(activity.address, '*:/');
-      } else {
-        bot.beginDialog(activity.address, '*:/');
       }
     });
   }
