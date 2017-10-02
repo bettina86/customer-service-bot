@@ -48,38 +48,10 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
   //top: 3
   });
 
-  /** QnA Maker knowledge base for complaints and discrimination set up */
-  var complaintKBRecognizer = new cognitiveservices.QnAMakerRecognizer({
-    knowledgeBaseId: '43791a27-d2d1-4212-be54-7da6ab61c784', 
-    subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
-    //top: 3
-    });
-
-    /** QnA Maker knowledge base for HUD program descriptions set up */
-  var programDescKBRecognizer = new cognitiveservices.QnAMakerRecognizer({
-    knowledgeBaseId: 'b2210c53-1441-4bf4-a1d8-7d0ddb1d632f', 
-    subscriptionKey: '1efc68010d3c43bd8d274104169242ad'
-    //top: 3
-    });
-
 
   /** Initializing the QnA Maker knowledge base*/
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
     recognizers: [recognizer], // QnA Maker loading knowledge base in this array
-    defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human" to start live chatting with HUD customer service.',
-    qnaThreshold: 0.3
-  });
-
-   /** Initializing the QnA Maker knowledge base*/
-   var ComplaintsQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
-    recognizers: [complaintKBRecognizer], // QnA Maker loading knowledge base in this array
-    defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human" to start live chatting with HUD customer service.',
-    qnaThreshold: 0.3
-  });
-
-   /** Initializing the QnA Maker knowledge base*/
-   var HUDProgramInfoQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
-    recognizers: [programDescKBRecognizer], // QnA Maker loading knowledge base in this array
     defaultMessage: 'I didn\'t find a good answer for that and am still learning. Try asking again or type "human" to start live chatting with HUD customer service.',
     qnaThreshold: 0.3
   });
@@ -180,7 +152,7 @@ bot.dialog('complaintsHelp', [
   },
   function(session, results) {
     session.sendTyping();
-    session.beginDialog('ComplaintQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
+    session.beginDialog('RentalQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
     complaintFirstRun = false; // User asked at least 1 question so adjust the bot dialog. 
@@ -216,7 +188,7 @@ bot.dialog('programInfo', [
   },
   function(session, results) {
     session.sendTyping();
-    session.beginDialog('HUDProgramInfoQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
+    session.beginDialog('RentalQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
     programFirstRun = false;
@@ -281,8 +253,6 @@ bot.dialog('botAbility', [
 
 /** Creating the QnA Maker dialog for access during bot chat */
 bot.dialog('RentalQnAMaker', BasicQnAMakerDialog);
-bot.dialog('ComplaintQnAMaker', ComplaintsQnAMakerDialog);
-bot.dialog('HUDProgramInfoQnAMaker', HUDProgramInfoQnAMakerDialog);
 
 /** Express method that sends the user's question to '/api/message' route for handling */
 app.post('/api/messages', connector.listen());
