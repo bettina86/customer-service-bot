@@ -63,7 +63,7 @@ bot.on('conversationUpdate', function(activity) {
   if (activity.membersAdded) {
     const hello = new builder.Message()
     .address(activity.address)
-    .text("Welcome to the HUD customer service bot! I'm not yet fully functioning. Type 'menu' to get started.");
+    .text("Welcome to the HUD customer service bot! I can answer questions about HUD's programs, what to do if you are discriminated against and give you state level local contact information. Type 'menu' to get started.");
     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
