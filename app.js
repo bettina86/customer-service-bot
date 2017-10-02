@@ -15,7 +15,7 @@ var cognitiveservices = require('botbuilder-cognitiveservices');
 var index = require('./routes/index');
 var app = express();
 
-/** Bot global variables */
+/** Bot global vars */
 let firstRunKB = true;
 
 // view engine setup
@@ -64,6 +64,8 @@ bot.on('conversationUpdate', function(activity) {
     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
+        bot.beginDialog(activity.address, '*:/');
+      } else {
         bot.beginDialog(activity.address, '*:/');
       }
     });
