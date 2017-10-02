@@ -48,7 +48,6 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
   //top: 3
   });
 
-
   /** Initializing the QnA Maker knowledge base*/
   var BasicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({ 
     recognizers: [recognizer], // QnA Maker loading knowledge base in this array
@@ -72,34 +71,11 @@ bot.on('conversationUpdate', function(activity) {
   }
 });
 
-bot.dialog('/', [
+bot.dialog('/',
   function(session) {
     session.userData.firstRun = true;
-    builder.Prompts.choice(session, "Click an option from the menu.", 
-    "Rental help in your state|Complaints and discrimination|Info about HUD programs|About the bot", 
-    { listStyle: builder.ListStyle.button });
-    session.send('Type "menu" to return to these options.');
-  },
-  function(session, results) {
-    switch(results.response.entity) { // checking which option the user clicked
-      case "Rental help in your state":
-        session.beginDialog('rentalHelp');
-        break;
-      case "Complaints and discrimination":
-        session.beginDialog('complaintsHelp');
-        break;
-      case "Info about HUD programs":
-        session.beginDialog('programInfo');
-        break;
-        case "About the bot":
-        session.beginDialog('botAbility');
-        break;
-      default: 
-        session.reset(); // Start over this dialog
-        break;
-    }
-  }]).triggerAction({
-    matches: /menu/i
+    session.send('Type "human" to talk with somone at HUD. Type "info" to learn about this bot.');
+    session.beginDialog("rentalHelp");
   });
 
 
@@ -107,7 +83,7 @@ bot.dialog('/', [
 bot.dialog('rentalHelp', [
   function(session) {
     if (rentalFirstRun == true) {
-      builder.Prompts.text(session, "Ask about low income housing and renting. You can enter the state in which you live for specific rental help.");
+      builder.Prompts.text(session, "How can I help?");
     } else {
       builder.Prompts.text(session, "Ready for another question.");      
     }
@@ -119,80 +95,6 @@ bot.dialog('rentalHelp', [
   function(session, results) {
     rentalFirstRun = false; // user asked at least one question so adjust the bot dialog
     session.replaceDialog('rentalHelp');
-  }
-]).beginDialogAction('handleHellos', 'helloDialog', {
-  onFindAction: function(context, callback) {
-    switch(context.message.text.toLowerCase()) {
-      case 'hello':
-        callback(null, 1.0, {topic: 'helloDialog'});
-        break;
-        case 'hello?':
-          callback(null, 1.0, {topic: 'helloDialog'});
-          break;
-        case 'are you there?':
-          callback(null, 1.0, {topic: 'helloDialog'});
-          break;
-      default:
-        callback(null, 0.0);
-        break;
-    }
-  }
-});
-
-
-/** When complaints and discrimination is chosen as the option, this dialog kicks off */
-bot.dialog('complaintsHelp', [
-  function(session, results) {
-    if (complaintFirstRun == true) {
-      builder.Prompts.text(session, "Ask about housing discrimination, Housing Choice Vouchers complaints, or property management complaints.");
-    }
-    else {
-      builder.Prompts.text(session, "Ready to answer another question ... ");
-    }
-  },
-  function(session, results) {
-    session.sendTyping();
-    session.beginDialog('RentalQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
-  },
-  function(session, results) {
-    complaintFirstRun = false; // User asked at least 1 question so adjust the bot dialog. 
-    session.replaceDialog('complaintsHelp');
-  }
-]).beginDialogAction('handleHellos', 'helloDialog', {
-  onFindAction: function(context, callback) {
-    switch(context.message.text.toLowerCase()) {
-      case 'hello':
-        callback(null, 1.0, {topic: 'helloDialog'});
-        break;
-        case 'hello?':
-          callback(null, 1.0, {topic: 'helloDialog'});
-          break;
-        case 'are you there?':
-          callback(null, 1.0, {topic: 'helloDialog'});
-          break;
-      default:
-        callback(null, 0.0);
-        break;
-    }
-  }
-});
-
-bot.dialog('programInfo', [
-  function(session) {
-    if (programFirstRun == true) {
-      builder.Prompts.text(session, "What questions do you have about HUD programs and services?");      
-    }
-    else {
-      builder.Prompts.text(session, "Ready for another question.");            
-    }
-  },
-  function(session, results) {
-    session.sendTyping();
-    session.beginDialog('RentalQnAMaker');  //  pass the user's question to the QnA Maker knowledge base
-  },
-  function(session, results) {
-    programFirstRun = false;
-    session.replaceDialog('programInfo');
   }
 ]).beginDialogAction('handleHellos', 'helloDialog', {
   onFindAction: function(context, callback) {
@@ -249,7 +151,9 @@ bot.dialog('botAbility', [
       session.endDialog();
     }
   }
-]);
+]).triggerAction({
+  matches: /info/i
+});
 
 /** Creating the QnA Maker dialog for access during bot chat */
 bot.dialog('RentalQnAMaker', BasicQnAMakerDialog);
