@@ -15,9 +15,6 @@ var cognitiveservices = require('botbuilder-cognitiveservices');
 var index = require('./routes/index');
 var app = express();
 
-/** Bot global vars */
-let firstRunKB = true;
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -64,6 +61,7 @@ bot.on('conversationUpdate', function(activity) {
     activity.membersAdded.forEach(function(identity) { // say hello only when bot joins and not when user joins
       if (identity.id === activity.address.bot.id) {
         bot.send(hello);
+        bot.beginDialog(activity.address, '*:/');
       }
     });
   }
@@ -71,18 +69,13 @@ bot.on('conversationUpdate', function(activity) {
 
 bot.dialog('/', [
   function(session) {
-   if (firstRunKB == true) {
-      builder.Prompts.text(session, "How can I help?");
-    } else {
-      builder.Prompts.text(session, "Ready for another question.");      
-    }
+    builder.Prompts.text(session, "How can I help you?");    
   },
   function(session, results) {
     session.sendTyping();
     session.beginDialog('RentalQnAMaker'); // pass the user's question to the QnA Maker knowledge base
   },
   function(session, results) {
-    firstRunKB = false; // user asked at least one question so adjust the bot dialog
     session.replaceDialog('/');
   }
 ]).beginDialogAction('handleHellos', 'helloDialog', {
