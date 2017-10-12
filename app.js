@@ -71,7 +71,6 @@ bot.dialog('/', [
   function(session) {
     session.send("Welcome to the HUD customer service bot! I can answer questions about HUD’s programs, what to do if you are discriminated against and give you state level local contact information.");
     session.send("Type ‘human’ to talk with somone at HUD. Type ‘info’ to learn about this chat bot.");
-    session.send("How can I help you?");
     session.beginDialog('questionDialog');   
   }
 ]);
