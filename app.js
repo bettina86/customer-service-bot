@@ -53,6 +53,17 @@ var recognizer = new cognitiveservices.QnAMakerRecognizer({
 /** Creating the bot and setting up the default dialog that displays to the user */
 var bot = new builder.UniversalBot(connector);
 
+
+const emailTemplate = {
+  "channelData": {
+    "htmlBody" : "<html><body style=\"font-family: Calibri; font-size: 11pt;\">This is the email body!</body></html>",
+    "subject":"This is the email subject",
+    "importance":"high"
+  }
+};
+
+
+
 // bot.on('conversationUpdate', function(activity) {
 //   if (activity.membersAdded) {
 //     const hello = new builder.Message()
@@ -67,21 +78,29 @@ var bot = new builder.UniversalBot(connector);
 //   }
 // });
 
+
 bot.dialog('/', [
   function(session) {
     session.send("Welcome to the HUD customer service bot! I can answer questions about HUD’s programs, what to do if you are discriminated against and give you state level local contact information.");
     session.send("Type ‘human’ to talk with somone at HUD. Type ‘info’ to learn about this chat bot.");
-    session.beginDialog('questionDialog');   
+    session.beginDialog('questionDialog');
   }
 ]);
 
 bot.dialog('questionDialog', [
   function(session) {
-    builder.Prompts.text(session, "How can I help you?");    
+    builder.Prompts.text(session, "How can I help you?"); 
+    var reply = new builder.Message(session);
+    if (session.message.address.channelId === 'email') {
+          reply.text(emailTemplate.toString());
+    }
+    
+    session.send(reply);   
   },
   function(session, results) {
     session.sendTyping();
     session.beginDialog('RentalQnAMaker'); // pass the user's question to the QnA Maker knowledge base
+    
   },
   function(session, results) {
     session.replaceDialog('questionDialog');
