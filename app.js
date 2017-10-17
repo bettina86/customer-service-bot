@@ -92,9 +92,8 @@ bot.dialog('questionDialog', [
     builder.Prompts.text(session, "How can I help you?"); 
     var reply = new builder.Message(session);
     if (session.message.address.channelId === 'email') {
-          reply.text(emailTemplate);
+          reply.text(JSON.stringify(emailTemplate));
     }
-    
     session.send(reply);   
   },
   function(session, results) {
