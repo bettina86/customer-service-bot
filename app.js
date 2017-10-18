@@ -90,11 +90,11 @@ bot.dialog('/', [
 bot.dialog('questionDialog', [
   function(session) {
     builder.Prompts.text(session, "How can I help you?"); 
-    var reply = new builder.Message(session);
-    if (session.message.address.channelId === 'email') {
-          reply.text(JSON.stringify(emailTemplate));
-    }
-    session.send(reply);   
+    // var reply = new builder.Message(session);
+    // if (session.message.address.channelId === 'email') {
+    //       reply.text(JSON.stringify(emailTemplate));
+    // }
+    // session.send(reply);   
   },
   function(session, results) {
     session.sendTyping();
